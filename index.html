@@ -6,24 +6,17 @@
 <title>Info Just Began</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  /* Reset */
   * { margin:0; padding:0; box-sizing:border-box; }
   html, body { height:100%; width:100%; overflow:hidden; font-family:'Orbitron', sans-serif; background:#0a0a0a; color:#fff; }
 
   /* Background animated nodes */
   #background {
-    position:fixed;
-    top:0; left:0; width:100%; height:100%;
+    position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1;
     background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);
     overflow:hidden;
-    z-index:-1;
   }
   .node {
-    position:absolute;
-    width:6px; height:6px;
-    background:#00fff5;
-    border-radius:50%;
-    opacity:0.7;
+    position:absolute; width:6px; height:6px; background:#00fff5; border-radius:50%; opacity:0.7;
     animation: float 10s linear infinite;
   }
   @keyframes float {
@@ -32,65 +25,50 @@
     100% { transform: translate(0,0) scale(1);}
   }
 
-  /* Hero */
+  /* Hero content */
   .hero {
-    position:absolute;
-    top:50%; left:50%;
-    transform:translate(-50%,-50%);
-    text-align:center;
-    animation: fadeIn 2s ease forwards;
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; width:90%; max-width:600px;
   }
   .hero h1 {
-    font-size:3rem;
-    margin-bottom:1rem;
-    color:#00fff5;
-    letter-spacing:2px;
+    font-size:3rem; color:#00fff5; letter-spacing:2px; margin-bottom:1rem; line-height:1.2;
   }
   .hero p {
-    font-size:1.2rem;
-    color:#aaa;
-    margin-bottom:2rem;
+    font-size:1.5rem; color:#aaa; margin-bottom:3rem; opacity:0;
+    transition: opacity 1s ease 1s;
   }
+
+  /* Button */
   .hero button {
-    padding:1rem 2rem;
-    font-size:1.2rem;
-    border:none;
-    border-radius:8px;
-    background:#00fff5;
-    color:#000;
-    cursor:pointer;
-    letter-spacing:1px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    padding:1.2rem 3rem; font-size:1.3rem; border:none; border-radius:12px;
+    background: linear-gradient(90deg,#00fff5,#00c3ff); color:#000; cursor:pointer; letter-spacing:1px;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    position:relative; overflow:hidden;
   }
-  .hero button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 20px #00fff5;
-  }
+  .hero button:hover { transform: scale(1.05); box-shadow: 0 0 25px #00fff5; }
 
-  @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+  /* Reveal effect behind button */
+  .reveal-text { position:absolute; top:0; left:0; width:100%; height:100%; display:flex; justify-content:center; align-items:center;
+    color:#00fff5; font-weight:700; font-size:1.2rem; letter-spacing:1px; transform:translateY(100%); transition: transform 0.5s ease; }
+  .hero button.clicked .reveal-text { transform:translateY(0); }
 
-  /* Typing effect */
-  .typing {
-    display:inline-block;
-    border-right:2px solid #00fff5;
-    white-space:nowrap;
-    overflow:hidden;
-    animation: typing 3s steps(40) infinite alternate;
+  /* Loading pulse effect */
+  .pulse {
+    position:absolute; width:120%; height:120%; top:-10%; left:-10%; border-radius:50%;
+    background:rgba(0,255,245,0.1); animation:pulse 1s ease infinite;
+    pointer-events:none;
   }
-  @keyframes typing {
-    from { width:0; }
-    to { width:15ch; }
-  }
+  @keyframes pulse { 0%{transform:scale(0.8);}50%{transform:scale(1.2);}100%{transform:scale(0.8);} }
 
-  /* Footer / FOMO */
+  /* Footer */
   .footer {
-    position:absolute;
-    bottom:2rem; left:50%;
-    transform:translateX(-50%);
-    text-align:center;
-    color:#555;
-    font-size:0.9rem;
+    position:absolute; bottom:2rem; left:50%; transform:translateX(-50%);
+    text-align:center; color:#555; font-size:0.9rem;
   }
+
+  /* Responsive text */
+  @media(max-width:768px){ .hero h1{font-size:2.2rem;} .hero p{font-size:1.2rem;} .hero button{font-size:1.1rem; padding:1rem 2rem;} }
+  @media(max-width:480px){ .hero h1{font-size:1.8rem;} .hero p{font-size:1rem;} .hero button{font-size:1rem; padding:0.8rem 1.8rem;} }
+
 </style>
 </head>
 <body>
@@ -98,18 +76,21 @@
 <div id="background"></div>
 
 <div class="hero">
-  <h1>Info didn’t die.</h1>
-  <h1>It just began.</h1>
-  <p class="typing">Something is coming. Are you ready?</p>
-  <button onclick="mintSpot()">Reserve Your Spot</button>
+  <h1>Info didn’t die.<br>It just began.</h1>
+  <p id="coming-text">Something is coming. Are you ready?</p>
+  <button id="mintBtn">
+    Reserve Your Spot
+    <div class="reveal-text">100 POL — early mint</div>
+    <div class="pulse"></div>
+  </button>
 </div>
 
 <div class="footer">
-  100 POL — early mint spot. Limited availability.
+  Limited availability. Join the network.
 </div>
 
 <script>
-  // Generate floating nodes
+  // Background nodes
   const bg = document.getElementById('background');
   for(let i=0;i<80;i++){
     const node = document.createElement('div');
@@ -123,10 +104,17 @@
     bg.appendChild(node);
   }
 
-  // Placeholder mint function
-  function mintSpot() {
-    alert("Reserved! Details coming via email/wallet.");
-  }
+  // Reveal text after page load
+  window.addEventListener('load', ()=>{
+    document.getElementById('coming-text').style.opacity = 1;
+  });
+
+  // Button interaction
+  const btn = document.getElementById('mintBtn');
+  btn.addEventListener('click', ()=>{
+    btn.classList.add('clicked');
+    setTimeout(()=>{ alert('Reserved! Details coming via email/wallet.'); }, 800);
+  });
 </script>
 
 </body>
