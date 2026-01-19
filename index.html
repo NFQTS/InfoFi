@@ -1,178 +1,349 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unprincipled Inc.</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>InfoFi • Resurrection Phase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Roboto+Mono:wght@300;400&display=swap" rel="stylesheet">
+
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  html, body { height:100%; width:100%; overflow:hidden; font-family:'Orbitron', sans-serif; background:#0a0a0a; color:#fff; }
-
-  /* Background canvas */
-  #background {
-    position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1;
-    background:#0a0a0a;
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
-  canvas { display:block; }
 
-  /* Hero content */
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+    font-family: 'Orbitron', sans-serif;
+    color: #e0fffe;
+    background-image: 
+      radial-gradient(circle at 15% 50%, rgba(0,255,245,0.06) 0%, transparent 25%),
+      radial-gradient(circle at 85% 30%, rgba(255,0,230,0.04) 0%, transparent 30%);
+  }
+
+  #bg-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .overlay-grid {
+    position: fixed;
+    inset: 0;
+    background: 
+      linear-gradient(to right, rgba(0,255,245,0.025) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0,255,245,0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.7;
+    animation: gridDrift 60s linear infinite;
+  }
+
+  @keyframes gridDrift {
+    0% { transform: translate(0,0); }
+    100% { transform: translate(-60px, -60px); }
+  }
+
   .hero {
-    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; width:90%; max-width:700px;
-  }
-  .hero h1 {
-    font-size:3rem; color:#00fff5; letter-spacing:2px; margin-bottom:1rem; line-height:1.2;
-    opacity:0; transform:translateY(-30px); animation:fadeUp 1.5s forwards;
-  }
-  .hero h1:nth-child(1) { animation-delay:0.3s; }
-  .hero h1:nth-child(2) { animation-delay:0.7s; }
-
-  .hero p {
-    font-size:1.5rem; color:#aaa; margin-bottom:3rem; opacity:0; transform:translateY(20px);
-    animation:fadeUp 1.5s forwards; animation-delay:1.2s;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
   }
 
-  @keyframes fadeUp {
-    to { opacity:1; transform:translateY(0); }
+  .glitch {
+    font-size: clamp(2.6rem, 7vw, 5.8rem);
+    font-weight: 900;
+    color: #00fff5;
+    text-shadow: 
+      0 0 10px #00fff5,
+      0 0 30px #00fff5aa,
+      2px 0 0 #ff00ea,
+      -2px 0 0 #00ffea;
+    letter-spacing: 0.08em;
+    line-height: 0.92;
+    animation: glitch 4s infinite;
+    position: relative;
   }
 
-  /* Button */
-  .hero button {
-    padding:1.3rem 3rem; font-size:1.3rem; border:none; border-radius:12px;
-    background: linear-gradient(90deg,#00fff5,#00c3ff); color:#000; cursor:pointer; letter-spacing:1px;
-    position:relative; overflow:hidden; transition: transform 0.2s ease, box-shadow 0.3s ease;
+  .glitch span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
   }
-  .hero button:hover { transform: scale(1.05); box-shadow: 0 0 35px #00fff5; }
 
-  .reveal-text {
-    position:absolute; top:0; left:0; width:100%; height:100%;
-    display:flex; justify-content:center; align-items:center;
-    color:#00fff5; font-weight:700; font-size:1.2rem; letter-spacing:1px;
-    transform:translateY(120%); transition: transform 0.6s ease;
+  .glitch span:nth-child(1) {
+    left: 2px;
+    text-shadow: -2px 0 #ff00ea;
+    clip: rect(0,900px,0,0);
+    animation: glitch-anim 3s infinite linear alternate-reverse;
   }
-  .hero button.clicked .reveal-text { transform:translateY(0); }
 
-  /* Pulse effect */
-  .pulse {
-    position:absolute; width:140%; height:140%; top:-20%; left:-20%; border-radius:50%;
-    background:rgba(0,255,245,0.08); animation:pulse 1s ease infinite;
-    pointer-events:none;
+  .glitch span:nth-child(2) {
+    left: -2px;
+    text-shadow: 2px 0 #00ffea;
+    clip: rect(0,900px,0,0);
+    animation: glitch-anim2 2.5s infinite linear alternate-reverse;
   }
-  @keyframes pulse { 0%{transform:scale(0.8);}50%{transform:scale(1.2);}100%{transform:scale(0.8);} }
 
-  /* Footer */
+  @keyframes glitch {
+    0%,100% { text-shadow: 0 0 10px #00fff5, 2px 0 #ff00ea, -2px 0 #00ffea; }
+    20% { text-shadow: 5px 0 #ff00ea, -5px 0 #00ffea; }
+    40% { text-shadow: -5px 0 #00ffea, 5px 0 #ff00ea; }
+  }
+
+  @keyframes glitch-anim {
+    0% { clip: rect(42px, 9999px, 84px, 0); transform: skew(0.4deg); }
+    5% { clip: rect(17px, 9999px, 59px, 0); transform: skew(0.8deg); }
+    /* ... many more random keyframes ... you can find full glitch sets online */
+  }
+
+  @keyframes glitch-anim2 {
+    0% { clip: rect(65px, 9999px, 119px, 0); }
+    5% { clip: rect(38px, 9999px, 73px, 0); }
+    /* add more... */
+  }
+
+  .subtitle {
+    font-family: 'Roboto Mono', monospace;
+    font-size: clamp(1.3rem, 3.5vw, 2rem);
+    color: #a0ffe0;
+    margin: 1.5rem 0 3.5rem;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: typeReveal 4s steps(40) forwards 1.8s, fadeIn 1s forwards 1.8s;
+    white-space: pre;
+    overflow: hidden;
+    border-right: 3px solid #00fff5;
+  }
+
+  @keyframes typeReveal {
+    from { width: 0; }
+    to   { width: 100%; }
+  }
+
+  @keyframes fadeIn { to { opacity:1; transform:translateY(0); } }
+
+  .mint-btn {
+    position: relative;
+    padding: 1.4rem 3.8rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #000;
+    background: linear-gradient(90deg, #00fff5, #ff00ea, #00fff5);
+    background-size: 200% 100%;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    overflow: hidden;
+    box-shadow: 0 0 40px rgba(0,255,245,0.4);
+    transition: all 0.4s;
+    z-index: 10;
+  }
+
+  .mint-btn:hover {
+    transform: translateY(-4px) scale(1.04);
+    box-shadow: 0 0 70px rgba(0,255,245,0.7), 0 0 120px rgba(255,0,234,0.4);
+  }
+
+  .mint-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    transform: translateX(-100%);
+    transition: 0.7s;
+  }
+
+  .mint-btn:hover::before { transform: translateX(100%); }
+
+  .reveal-layer {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    color: #00fff5;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(100%);
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .mint-btn.clicked .reveal-layer { transform: translateY(0); }
+
+  .scanline {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 120%;
+    background: linear-gradient(to bottom, transparent, rgba(0,255,245,0.15), transparent);
+    animation: scan 8s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+
   .footer {
-    position:absolute; bottom:2rem; left:50%; transform:translateX(-50%);
-    text-align:center; color:#555; font-size:0.9rem;
+    position: absolute;
+    bottom: 1.8rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #444;
+    font-size: 0.95rem;
+    font-family: 'Roboto Mono', monospace;
+    letter-spacing: 1px;
   }
 
-  /* Responsive */
-  @media(max-width:768px){ .hero h1{font-size:2.2rem;} .hero p{font-size:1.2rem;} .hero button{font-size:1.1rem; padding:1rem 2rem;} }
-  @media(max-width:480px){ .hero h1{font-size:1.8rem;} .hero p{font-size:1rem;} .hero button{font-size:1rem; padding:0.8rem 1.8rem;} }
-
+  @media (max-width: 768px) {
+    .glitch { font-size: clamp(2.4rem, 9vw, 4.2rem); }
+    .subtitle { font-size: 1.35rem; }
+    .mint-btn { padding: 1.2rem 2.8rem; font-size: 1.3rem; }
+  }
 </style>
 </head>
 <body>
 
-<div id="background"></div>
+<div id="bg-canvas"></div>
+<div class="overlay-grid"></div>
 
 <div class="hero">
-  <h1>InfoFi didn’t die...</h1>
-  <h1>It has just begun...</h1>
-  <p id="coming-text">Something is coming...</p>
-  <button id="mintBtn">
-    Reserve Your Spot
-    <div class="reveal-text">Preselling 100/10,000 mint spots to prove demand.</div>
-    <div class="pulse"></div>
+  <h1 class="glitch" aria-label="InfoFi didn’t die...">
+    <span>InfoFi didn’t die...</span>
+    InfoFi didn’t die...
+    <span>InfoFi didn’t die...</span>
+  </h1>
+  
+  <h1 class="glitch" aria-label="It has just begun..." style="margin-top: -0.8rem;">
+    <span>It has just begun...</span>
+    It has just begun...
+    <span>It has just begun...</span>
+  </h1>
+
+  <p class="subtitle" id="typing">Something   is   coming   ................................</p>
+
+  <button class="mint-btn" id="mintBtn">
+    RESERVE YOUR SPOT
+    <div class="reveal-layer">PRESALE 100 / 10,000 • PROOF OF DEMAND</div>
+    <div class="scanline"></div>
   </button>
 </div>
 
 <div class="footer">
-  Limited availability. Join the network.
+  Phase 0 • Limited • Decentralized Mindshare Only
 </div>
 
 <script>
-  // Canvas background with animated nodes + connecting lines
-  const canvas = document.createElement('canvas');
-  document.getElementById('background').appendChild(canvas);
-  const ctx = canvas.getContext('2d');
-  let w = canvas.width = window.innerWidth;
-  let h = canvas.height = window.innerHeight;
-  const nodes = [];
-  const nodeCount = 70;
+// Enhanced node network with mouse attraction
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-  for(let i=0;i<nodeCount;i++){
-    nodes.push({
-      x: Math.random()*w,
-      y: Math.random()*h,
-      vx: (Math.random()-0.5)*0.4,
-      vy: (Math.random()-0.5)*0.4,
-      radius:2 + Math.random()*3
-    });
-  }
+const nodes = [];
+const nodeCount = 90;
+const mouse = { x: null, y: null, radius: 180 };
 
-  function draw(){
-    ctx.clearRect(0,0,w,h);
-    // draw nodes
-    ctx.fillStyle='#00fff5';
-    nodes.forEach(n=>{
-      ctx.beginPath();
-      ctx.arc(n.x,n.y,n.radius,0,Math.PI*2);
-      ctx.fill();
-    });
-    // draw lines
-    ctx.strokeStyle='rgba(0,255,245,0.1)';
-    for(let i=0;i<nodes.length;i++){
-      for(let j=i+1;j<nodes.length;j++){
-        const dx = nodes[i].x - nodes[j].x;
-        const dy = nodes[i].y - nodes[j].y;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        if(dist<120){
-          ctx.beginPath();
-          ctx.moveTo(nodes[i].x,nodes[i].y);
-          ctx.lineTo(nodes[j].x,nodes[j].y);
-          ctx.stroke();
-        }
+for(let i = 0; i < nodeCount; i++){
+  nodes.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: (Math.random()-0.5)*0.6,
+    vy: (Math.random()-0.5)*0.6,
+    baseRadius: 1.8 + Math.random()*3.2,
+    radius: 0
+  });
+}
+
+window.addEventListener('mousemove', e => {
+  mouse.x = e.x;
+  mouse.y = e.y;
+});
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+function animate(){
+  ctx.fillStyle = 'rgba(0,0,0,0.08)';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  nodes.forEach(n => {
+    // mouse attraction
+    if(mouse.x && mouse.y){
+      const dx = mouse.x - n.x;
+      const dy = mouse.y - n.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if(dist < mouse.radius){
+        n.x += dx * 0.008;
+        n.y += dy * 0.008;
       }
     }
-    // update positions
-    nodes.forEach(n=>{
-      n.x+=n.vx; n.y+=n.vy;
-      if(n.x<0||n.x>w) n.vx*=-1;
-      if(n.y<0||n.y>h) n.vy*=-1;
-    });
-    requestAnimationFrame(draw);
+
+    // bounce
+    n.x += n.vx;
+    n.y += n.vy;
+    if(n.x < 0 || n.x > canvas.width) n.vx *= -1;
+    if(n.y < 0 || n.y > canvas.height) n.vy *= -1;
+
+    // glow radius pulse
+    n.radius = n.baseRadius + Math.sin(Date.now()*0.001 + n.x*0.01)*1.2;
+
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.radius, 0, Math.PI*2);
+    ctx.fillStyle = '#00fff5';
+    ctx.shadowColor = '#00fff5';
+    ctx.shadowBlur = 15;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  });
+
+  // connections
+  ctx.strokeStyle = 'rgba(0,255,245,0.09)';
+  ctx.lineWidth = 1;
+  for(let i = 0; i < nodes.length; i++){
+    for(let j = i+1; j < nodes.length; j++){
+      const dx = nodes[i].x - nodes[j].x;
+      const dy = nodes[j].y - nodes[i].y;
+      const dist = Math.hypot(dx, dy);
+      if(dist < 140){
+        ctx.globalAlpha = (140 - dist) / 140 * 0.6;
+        ctx.beginPath();
+        ctx.moveTo(nodes[i].x, nodes[i].y);
+        ctx.lineTo(nodes[j].x, nodes[j].y);
+        ctx.stroke();
+      }
+    }
   }
-  draw();
+  ctx.globalAlpha = 1;
 
-  window.addEventListener('resize', ()=>{
-    w = canvas.width = window.innerWidth;
-    h = canvas.height = window.innerHeight;
-  });
+  requestAnimationFrame(animate);
+}
+animate();
 
-  // Fade in text
-  window.addEventListener('load', ()=>{
-    document.getElementById('coming-text').style.opacity = 1;
-  });
-
-  // Button interaction
+// Button interaction
+document.getElementById('mintBtn').onclick = () => {
   const btn = document.getElementById('mintBtn');
-  btn.addEventListener('click', ()=>{
-    btn.classList.add('clicked');
-    // subtle loading pulse + alert placeholder
-    const pulse = document.createElement('div');
-    pulse.style.position='absolute';
-    pulse.style.width='100%';
-    pulse.style.height='100%';
-    pulse.style.top='0';
-    pulse.style.left='0';
-    pulse.style.background='rgba(0,255,245,0.2)';
-    pulse.style.borderRadius='12px';
-    pulse.style.animation='pulse 0.8s ease forwards';
-    btn.appendChild(pulse);
-    setTimeout(()=>{ alert('Reserved! Details coming via email/wallet.'); }, 800);
-  });
+  btn.classList.add('clicked');
+  
+  // fake loading + glitch burst
+  setTimeout(() => {
+    alert('Spot reserved • Watch your wallet/email — the real drop is coming...');
+  }, 1200);
+};
 </script>
-
 </body>
 </html>
