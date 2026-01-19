@@ -1,246 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unprincipled Inc. - Web3 Music Revolution</title>
-    <style>
-        /* Global Styles - Dark Mode with Futuristic Gradients */
-        body {
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
-            color: #ffffff;
-            overflow-x: hidden;
-            position: relative;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Info Just Began</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* Reset */
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; width:100%; overflow:hidden; font-family:'Orbitron', sans-serif; background:#0a0a0a; color:#fff; }
 
-        /* Particle Background for Innovative Data Flow Visualization */
-        #particles-js {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: 1;
-            pointer-events: none;
-        }
+  /* Background animated nodes */
+  #background {
+    position:fixed;
+    top:0; left:0; width:100%; height:100%;
+    background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);
+    overflow:hidden;
+    z-index:-1;
+  }
+  .node {
+    position:absolute;
+    width:6px; height:6px;
+    background:#00fff5;
+    border-radius:50%;
+    opacity:0.7;
+    animation: float 10s linear infinite;
+  }
+  @keyframes float {
+    0% { transform: translate(0,0) scale(1);}
+    50% { transform: translate(calc(var(--x) * 50px), calc(var(--y) * 50px)) scale(1.5);}
+    100% { transform: translate(0,0) scale(1);}
+  }
 
-        /* Hero Section - Immersive with 3D-like Depth and Animations */
-        .hero {
-            position: relative;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            z-index: 2;
-            padding: 0 20px;
-            background: radial-gradient(circle at center, rgba(255, 0, 255, 0.1), transparent);
-        }
+  /* Hero */
+  .hero {
+    position:absolute;
+    top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    text-align:center;
+    animation: fadeIn 2s ease forwards;
+  }
+  .hero h1 {
+    font-size:3rem;
+    margin-bottom:1rem;
+    color:#00fff5;
+    letter-spacing:2px;
+  }
+  .hero p {
+    font-size:1.2rem;
+    color:#aaa;
+    margin-bottom:2rem;
+  }
+  .hero button {
+    padding:1rem 2rem;
+    font-size:1.2rem;
+    border:none;
+    border-radius:8px;
+    background:#00fff5;
+    color:#000;
+    cursor:pointer;
+    letter-spacing:1px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .hero button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #00fff5;
+  }
 
-        .hero h1 {
-            font-size: 4rem;
-            margin: 0;
-            background: linear-gradient(45deg, #ff00ff, #00ffff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
+  @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
 
-        @keyframes glow {
-            from { text-shadow: 0 0 10px #ff00ff; }
-            to { text-shadow: 0 0 20px #00ffff; }
-        }
+  /* Typing effect */
+  .typing {
+    display:inline-block;
+    border-right:2px solid #00fff5;
+    white-space:nowrap;
+    overflow:hidden;
+    animation: typing 3s steps(40) infinite alternate;
+  }
+  @keyframes typing {
+    from { width:0; }
+    to { width:15ch; }
+  }
 
-        .hero p {
-            font-size: 1.5rem;
-            max-width: 800px;
-            margin: 20px 0;
-            opacity: 0.8;
-            animation: fadeIn 1.5s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 0.8; transform: translateY(0); }
-        }
-
-        /* CTA Button with Micro-Interaction */
-        .cta {
-            background: linear-gradient(45deg, #ff00ff, #00ffff);
-            border: none;
-            color: #0a0a0a;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .cta:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
-        }
-
-        /* Sections - Bento Grid Layout for Modern Feel */
-        section {
-            position: relative;
-            z-index: 2;
-            padding: 80px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .bento-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .bento-item {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s;
-        }
-
-        .bento-item:hover {
-            transform: translateY(-10px);
-        }
-
-        .bento-item h2 {
-            font-size: 2rem;
-            margin-bottom: 15px;
-            background: linear-gradient(45deg, #00ffff, #ff00ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Innovative Data Monetization Viz - Interactive SVG */
-        #data-viz {
-            width: 100%;
-            height: 400px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        svg path {
-            stroke: #00ffff;
-            stroke-width: 2;
-            fill: none;
-            stroke-dasharray: 1000;
-            stroke-dashoffset: 1000;
-            animation: dash 5s linear forwards infinite;
-        }
-
-        @keyframes dash {
-            to { stroke-dashoffset: 0; }
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 20px;
-            background: #0a0a0a;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2.5rem; }
-            .hero p { font-size: 1.2rem; }
-        }
-    </style>
+  /* Footer / FOMO */
+  .footer {
+    position:absolute;
+    bottom:2rem; left:50%;
+    transform:translateX(-50%);
+    text-align:center;
+    color:#555;
+    font-size:0.9rem;
+  }
+</style>
 </head>
 <body>
-    <!-- Particle.js Container for Data Particles -->
-    <div id="particles-js"></div>
 
-    <!-- Hero Section -->
-    <header class="hero">
-        <h1>Unprincipled Inc. Web3 Music Revolution</h1>
-        <p>First to market: Own and monetize your data from day one. Powered by Polygon for seamless, low-fee control over your music, fans, and impact.</p>
-        <button class="cta" onclick="connectWallet()">Connect Wallet & Join</button>
-    </header>
+<div id="background"></div>
 
-    <!-- Innovation Section with Bento Grid -->
-    <section>
-        <h2 style="text-align: center;">Why We're Different</h2>
-        <div class="bento-grid">
-            <div class="bento-item">
-                <h2>Data Ownership Revolution</h2>
-                <p>From the moment you onboard, control and monetize your data via IPFS and Polygon smart contracts. No middlemen—your music, your rules.</p>
-            </div>
-            <div class="bento-item">
-                <h2>Established Partners</h2>
-                <p>Backed by real-world businesses and Web2 experts. Collaborations with artists, charities, and models for holistic opportunities.</p>
-            </div>
-            <div class="bento-item">
-                <h2>Social Impact Built-In</h2>
-                <p>Fund guitars for creators, empower models against exploitation, and support reformation programs to keep talent out of prison.</p>
-            </div>
-        </div>
-    </section>
+<div class="hero">
+  <h1>Info didn’t die.</h1>
+  <h1>It just began.</h1>
+  <p class="typing">Something is coming. Are you ready?</p>
+  <button onclick="mintSpot()">Reserve Your Spot</button>
+</div>
 
-    <!-- Interactive Data Viz Section -->
-    <section id="data-viz">
-        <svg width="600" height="300" viewBox="0 0 600 300">
-            <!-- Simplified data flow paths for visualization -->
-            <path d="M100,150 Q200,50 300,150 Q400,250 500,150" />
-            <path d="M100,150 Q200,250 300,150 Q400,50 500,150" />
-            <circle cx="100" cy="150" r="20" fill="#ff00ff" />
-            <circle cx="500" cy="150" r="20" fill="#00ffff" />
-            <text x="70" y="155" fill="#ffffff" font-size="12">Your Data</text>
-            <text x="470" y="155" fill="#ffffff" font-size="12">Monetized</text>
-        </svg>
-    </section>
+<div class="footer">
+  100 POL — early mint spot. Limited availability.
+</div>
 
-    <!-- Partners Section -->
-    <section>
-        <h2 style="text-align: center;">Our Established Network</h2>
-        <div class="bento-grid">
-            <div class="bento-item">Partner 1: Web2 Music Giant</div>
-            <div class="bento-item">Partner 2: Charity Org</div>
-            <div class="bento-item">Partner 3: Modeling Agency</div>
-        </div>
-    </section>
+<script>
+  // Generate floating nodes
+  const bg = document.getElementById('background');
+  for(let i=0;i<80;i++){
+    const node = document.createElement('div');
+    node.classList.add('node');
+    node.style.top = Math.random()*100 + 'vh';
+    node.style.left = Math.random()*100 + 'vw';
+    node.style.setProperty('--x', (Math.random()-0.5)*2);
+    node.style.setProperty('--y', (Math.random()-0.5)*2);
+    node.style.animationDuration = (5 + Math.random()*10)+'s';
+    node.style.opacity = 0.3 + Math.random()*0.7;
+    bg.appendChild(node);
+  }
 
-    <footer>
-        <p>&copy; 2026 Unprincipled Inc. | @UnprincipledInc on X | Built on Polygon</p>
-    </footer>
+  // Placeholder mint function
+  function mintSpot() {
+    alert("Reserved! Details coming via email/wallet.");
+  }
+</script>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script>
-        // Particles.js for Data Particle Effects - Innovative Touch
-        particlesJS('particles-js', {
-            particles: {
-                number: { value: 80, density: { enable: true, value_area: 800 } },
-                color: { value: '#00ffff' },
-                shape: { type: 'circle' },
-                opacity: { value: 0.5, random: true },
-                size: { value: 3, random: true },
-                line_linked: { enable: true, distance: 150, color: '#ff00ff', opacity: 0.4, width: 1 },
-                move: { enable: true, speed: 2, direction: 'none', random: true, straight: false, out_mode: 'out', bounce: false }
-            },
-            interactivity: {
-                detect_on: 'canvas',
-                events: { onhover: { enable: true, mode: 'grab' }, onclick: { enable: true, mode: 'push' }, resize: true },
-                modes: { grab: { distance: 140, line_linked: { opacity: 1 } }, push: { particles_nb: 4 } }
-            },
-            retina_detect: true
-        });
-
-        // Placeholder Wallet Connect - For Web3 Integration
-        function connectWallet() {
-            alert('Connecting to Polygon Wallet... (Demo - In real app, use Web3.js or ethers.js)');
-        }
-    </script>
 </body>
 </html>
