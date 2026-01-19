@@ -105,17 +105,7 @@
     40% { text-shadow: -5px 0 #00ffea, 5px 0 #ff00ea; }
   }
 
-  @keyframes glitch-anim {
-    0% { clip: rect(42px, 9999px, 84px, 0); transform: skew(0.4deg); }
-    5% { clip: rect(17px, 9999px, 59px, 0); transform: skew(0.8deg); }
-    /* ... many more random keyframes ... you can find full glitch sets online */
-  }
-
-  @keyframes glitch-anim2 {
-    0% { clip: rect(65px, 9999px, 119px, 0); }
-    5% { clip: rect(38px, 9999px, 73px, 0); }
-    /* add more... */
-  }
+  /* You can add more glitch-anim keyframes if you want full effect */
 
   .subtitle {
     font-family: 'Roboto Mono', monospace;
@@ -170,6 +160,12 @@
 
   .mint-btn:hover::before { transform: translateX(100%); }
 
+  .mint-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
   .reveal-layer {
     position: absolute;
     inset: 0;
@@ -181,6 +177,7 @@
     justify-content: center;
     transform: translateY(100%);
     transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
   }
 
   .mint-btn.clicked .reveal-layer { transform: translateY(0); }
@@ -235,8 +232,8 @@
   <p class="subtitle" id="typing">Something   is   coming   ................................</p>
 
   <button class="mint-btn" id="mintBtn">
-    RESERVE YOUR SPOT
-    <div class="reveal-layer">PRESALE 100 / 10,000 • PROOF OF DEMAND</div>
+    CONNECT WALLET TO RESERVE (100 POL)
+    <div class="reveal-layer">Waiting for wallet...</div>
     <div class="scanline"></div>
   </button>
 </div>
@@ -245,8 +242,11 @@
   Phase 0 • Limited • Decentralized
 </div>
 
+<!-- viem CDN - lightweight global build -->
+<script src="https://unpkg.com/viem@2/dist/index.global.js"></script>
+
 <script>
-// Enhanced node network with mouse attraction
+// Enhanced node network with mouse attraction (your original background script)
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
@@ -282,7 +282,6 @@ function animate(){
   ctx.fillRect(0,0,canvas.width,canvas.height);
 
   nodes.forEach(n => {
-    // mouse attraction
     if(mouse.x && mouse.y){
       const dx = mouse.x - n.x;
       const dy = mouse.y - n.y;
@@ -293,13 +292,11 @@ function animate(){
       }
     }
 
-    // bounce
     n.x += n.vx;
     n.y += n.vy;
     if(n.x < 0 || n.x > canvas.width) n.vx *= -1;
     if(n.y < 0 || n.y > canvas.height) n.vy *= -1;
 
-    // glow radius pulse
     n.radius = n.baseRadius + Math.sin(Date.now()*0.001 + n.x*0.01)*1.2;
 
     ctx.beginPath();
@@ -311,7 +308,6 @@ function animate(){
     ctx.shadowBlur = 0;
   });
 
-  // connections
   ctx.strokeStyle = 'rgba(0,255,245,0.09)';
   ctx.lineWidth = 1;
   for(let i = 0; i < nodes.length; i++){
@@ -334,16 +330,134 @@ function animate(){
 }
 animate();
 
-// Button interaction
-document.getElementById('mintBtn').onclick = () => {
-  const btn = document.getElementById('mintBtn');
-  btn.classList.add('clicked');
-  
-  // fake loading + glitch burst
-  setTimeout(() => {
-    alert('Spot reserved • Watch your wallet/email — the real drop is coming...');
-  }, 1200);
-};
+// ───────────────────────────────────────────────
+// PAYMENT LOGIC - pure vanilla JS + viem
+// ───────────────────────────────────────────────
+
+const btn = document.getElementById('mintBtn');
+const statusLayer = btn.querySelector('.reveal-layer');
+
+let accounts = [];
+let provider;
+
+function shortenAddress(addr) {
+  return addr ? addr.slice(0,6) + '...' + addr.slice(-4) : '';
+}
+
+async function connectWallet() {
+  if (!window.ethereum) {
+    alert("No EVM wallet detected!\nPlease install MetaMask or another wallet.");
+    return;
+  }
+
+  try {
+    btn.disabled = true;
+    btn.textContent = 'CONNECTING...';
+    statusLayer.textContent = 'Requesting connection...';
+
+    provider = window.ethereum;
+
+    // Connect & get accounts
+    accounts = await provider.request({ method: 'eth_requestAccounts' });
+
+    // Check/switch to Polygon Mainnet (chainId 137 = 0x89)
+    const chainId = await provider.request({ method: 'eth_chainId' });
+    const polygonChainId = '0x89';
+
+    if (chainId !== polygonChainId) {
+      try {
+        await provider.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: polygonChainId }],
+        });
+      } catch (switchError) {
+        if (switchError.code === 4902) { // Chain not added
+          await provider.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: '0x89',
+              chainName: 'Polygon Mainnet',
+              nativeCurrency: { name: 'POL', symbol: 'POL', decimals: 18 },
+              rpcUrls: ['https://polygon-rpc.com'],
+              blockExplorerUrls: ['https://polygonscan.com']
+            }]
+          });
+        } else {
+          throw switchError;
+        }
+      }
+    }
+
+    // Success - update button
+    btn.textContent = `RESERVE SPOT (100 POL) • ${shortenAddress(accounts[0])}`;
+    statusLayer.textContent = 'Ready – click to pay 100 POL';
+    btn.disabled = false;
+    btn.onclick = sendPayment;
+
+  } catch (err) {
+    alert("Connection failed:\n" + (err.message || err));
+    resetButton();
+  }
+}
+
+async function sendPayment() {
+  if (!accounts[0] || !provider) {
+    alert("Wallet disconnected - please reconnect.");
+    resetButton();
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'SENDING...';
+  statusLayer.textContent = 'Preparing transaction...';
+
+  try {
+    // Create wallet client from injected provider
+    const walletClient = viem.createWalletClient({
+      account: accounts[0],
+      chain: viem.polygon,
+      transport: viem.custom(window.ethereum)
+    });
+
+    // Send exactly 100 POL
+    const hash = await walletClient.sendTransaction({
+      to: '0xYOUR_WALLET_ADDRESS_HERE',  // ← CHANGE THIS TO YOUR ADDRESS!
+      value: viem.parseEther('100')
+    });
+
+    // Success!
+    btn.textContent = 'SPOT RESERVED!';
+    statusLayer.textContent = `TX: ${hash.slice(0,10)}... → Confirmed soon`;
+    btn.classList.add('clicked'); // Trigger your glitch animation!
+
+    // Optional: Wait for confirmation (lightweight)
+    const publicClient = viem.createPublicClient({
+      chain: viem.polygon,
+      transport: viem.custom(window.ethereum)
+    });
+    await publicClient.waitForTransactionReceipt({ hash });
+    statusLayer.textContent = `TX: ${hash.slice(0,10)}... • Confirmed on Polygon!`;
+
+  } catch (err) {
+    let msg = err.shortMessage || err.message || err;
+    if (msg.includes('rejected')) msg = 'Transaction rejected by user';
+    alert("Payment failed:\n" + msg);
+    resetButton();
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function resetButton() {
+  btn.textContent = 'CONNECT WALLET TO RESERVE (100 POL)';
+  statusLayer.textContent = 'Waiting for wallet...';
+  btn.onclick = connectWallet;
+  btn.disabled = false;
+  btn.classList.remove('clicked');
+}
+
+// Initial setup
+btn.onclick = connectWallet;
 </script>
 </body>
 </html>
