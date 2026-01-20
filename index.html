@@ -228,7 +228,7 @@
   <p class="subtitle" id="animatedSubtitle">Something is coming</p>
 
   <div class="cta-container">
-    <button class="cta-button" id="launchBtn">Launch</button>
+    <button class="cta-button" id="launchBtn" type="button">Launch</button>
   </div>
 </div>
 
@@ -260,9 +260,7 @@
 </div>
 
 <script>
-// ────────────────────────
-// Animated "Something is coming..." dots
-// ────────────────────────
+// ───────── Animated "Something is coming..." dots
 const subtitleEl = document.getElementById('animatedSubtitle');
 let dotCount = 0;
 let forward = true;
@@ -280,12 +278,9 @@ function animateDots() {
   }
   setTimeout(animateDots, 500);
 }
-
 animateDots();
 
-// ────────────────────────
-// Background nodes animation
-// ────────────────────────
+// ───────── Background particle animation
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
@@ -295,14 +290,14 @@ const nodes = [];
 const nodeCount = 90;
 const mouse = { x: null, y: null, radius: 180 };
 
-for(let i = 0; i < nodeCount; i++){
+for(let i=0;i<nodeCount;i++){
   nodes.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
+    x: Math.random()*canvas.width,
+    y: Math.random()*canvas.height,
     vx: (Math.random()-0.5)*0.6,
     vy: (Math.random()-0.5)*0.6,
-    baseRadius: 1.8 + Math.random()*3.2,
-    radius: 0
+    baseRadius:1.8 + Math.random()*3.2,
+    radius:0
   });
 }
 
@@ -321,78 +316,71 @@ function animate(){
       if(dist < mouse.radius){ n.x += dx*0.008; n.y += dy*0.008; }
     }
     n.x += n.vx; n.y += n.vy;
-    if(n.x < 0 || n.x > canvas.width) n.vx *= -1;
-    if(n.y < 0 || n.y > canvas.height) n.vy *= -1;
+    if(n.x < 0 || n.x > canvas.width) n.vx*=-1;
+    if(n.y < 0 || n.y > canvas.height) n.vy*=-1;
     n.radius = n.baseRadius + Math.sin(Date.now()*0.001 + n.x*0.01)*1.2;
 
     ctx.beginPath();
     ctx.arc(n.x, n.y, n.radius, 0, Math.PI*2);
-    ctx.fillStyle = '#00fff5';
-    ctx.shadowColor = '#00fff5';
-    ctx.shadowBlur = 15;
+    ctx.fillStyle='#00fff5';
+    ctx.shadowColor='#00fff5';
+    ctx.shadowBlur=15;
     ctx.fill();
-    ctx.shadowBlur = 0;
+    ctx.shadowBlur=0;
   });
 
-  ctx.strokeStyle = 'rgba(0,255,245,0.09)';
-  ctx.lineWidth = 1;
-  for(let i = 0; i < nodes.length; i++){
-    for(let j = i+1; j < nodes.length; j++){
+  ctx.strokeStyle='rgba(0,255,245,0.09)';
+  ctx.lineWidth=1;
+  for(let i=0;i<nodes.length;i++){
+    for(let j=i+1;j<nodes.length;j++){
       const dx = nodes[i].x - nodes[j].x;
       const dy = nodes[j].y - nodes[i].y;
-      const dist = Math.hypot(dx, dy);
-      if(dist < 140){
-        ctx.globalAlpha = (140 - dist)/140*0.6;
+      const dist = Math.hypot(dx,dy);
+      if(dist<140){
+        ctx.globalAlpha = (140-dist)/140*0.6;
         ctx.beginPath();
-        ctx.moveTo(nodes[i].x, nodes[i].y);
-        ctx.lineTo(nodes[j].x, nodes[j].y);
+        ctx.moveTo(nodes[i].x,nodes[i].y);
+        ctx.lineTo(nodes[j].x,nodes[j].y);
         ctx.stroke();
       }
     }
   }
-  ctx.globalAlpha = 1;
+  ctx.globalAlpha=1;
   requestAnimationFrame(animate);
 }
+animate();
 
-// ────────────────────────
-// Launch button triggers stats reveal
-// ────────────────────────
+// ───────── Launch button triggers stats reveal
 document.getElementById('launchBtn').addEventListener('click', () => {
   const hero = document.getElementById('hero');
   const statsSection = document.getElementById('statsSection');
-  hero.style.opacity = 0; // fade hero
-  setTimeout(() => {
-    hero.style.display = 'none';
+  hero.style.opacity=0;
+  setTimeout(()=>{
+    hero.style.display='none';
     statsSection.classList.add('show');
 
-    // Animate cards in sequence
     const cards = statsSection.querySelectorAll('.stat-card');
-    cards.forEach((card, index) => {
-      setTimeout(() => card.classList.add('show'), index * 200);
-    });
+    cards.forEach((card,index)=>{ setTimeout(()=>card.classList.add('show'),index*200); });
 
-    // Animate numbers counting up
     animateNumber('vehiclesReady', 12);
     animateNumber('vehiclesSold', 8);
     animateNumber('creatorPayouts', 5);
-    animateNumber('avgVideo', 120); // example $ per hour
-    animateNumber('avgImage', 35);  // example $ per HD image
-  }, 600);
+    animateNumber('avgVideo', 120);
+    animateNumber('avgImage', 35);
+  },600);
 });
 
-// ────────────────────────
-// Number count-up animation
-// ────────────────────────
-function animateNumber(id, target) {
-  const el = document.getElementById(id);
-  let current = 0;
-  const increment = Math.ceil(target / 60);
-  const interval = setInterval(() => {
-    current += increment;
-    if(current >= target) current = target;
-    el.textContent = current;
-    if(current >= target) clearInterval(interval);
-  }, 30);
+// ───────── Number count-up animation
+function animateNumber(id,target){
+  const el=document.getElementById(id);
+  let current=0;
+  const increment=Math.ceil(target/60);
+  const interval=setInterval(()=>{
+    current+=increment;
+    if(current>=target) current=target;
+    el.textContent=current;
+    if(current>=target) clearInterval(interval);
+  },30);
 }
 </script>
 
