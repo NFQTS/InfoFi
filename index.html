@@ -145,9 +145,10 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0);
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
     width: 90%;
     opacity: 0;
     transition: all 0.6s ease;
@@ -156,6 +157,36 @@
   .stats-section.show {
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
+  }
+
+  .stats-heading {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    color: #00fff5;
+    text-align: center;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 8px #00fff5aa;
+  }
+
+  .main-info-card {
+    background: rgba(0,255,245,0.05);
+    border: 2px solid #00fff5;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    color: #00fff5;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 1rem;
+    box-shadow: 0 0 15px #00fff5aa;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+    width: 100%;
   }
 
   .stat-card {
@@ -183,11 +214,6 @@
     margin-bottom: 0.5rem;
   }
 
-  .stat-card p {
-    font-size: 1.1rem;
-    color: #a0ffe0;
-  }
-
   .footer {
     position: absolute;
     bottom: 1.8rem;
@@ -203,7 +229,7 @@
     .glitch { font-size: clamp(2.4rem, 9vw, 4.2rem); }
     .subtitle { font-size: 1.35rem; }
     .cta-button { font-size: 1.2rem; padding: 0.7rem 1.8rem; }
-    .stats-section { gap: 1rem; }
+    .stats-row { gap: 1rem; }
   }
 </style>
 </head>
@@ -233,26 +259,36 @@
 </div>
 
 <div class="stats-section" id="statsSection">
-  <div class="stat-card">
-    <h2 id="vehiclesReady">0</h2>
-    <p>Vehicles Ready to Sell</p>
-  </div>
-  <div class="stat-card">
-    <h2 id="vehiclesSold">0</h2>
-    <p>Vehicles Sold</p>
-  </div>
-  <div class="stat-card">
-    <h2 id="creatorPayouts">0</h2>
+
+  <!-- Useful Information Heading -->
+  <h2 class="stats-heading">Useful Information</h2>
+
+  <!-- Creator Payouts box above -->
+  <div class="stat-card main-info-card">
+    <h2 id="creatorPayouts">1</h2>
     <p>Creator Payouts</p>
   </div>
-  <div class="stat-card">
-    <h2 id="avgVideo">0</h2>
-    <p>Avg Payout / Hour of Video</p>
+
+  <!-- Main stats row -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <h2 id="vehiclesReady">0</h2>
+      <p>Vehicles Ready to Sell</p>
+    </div>
+    <div class="stat-card">
+      <h2 id="vehiclesSold">0</h2>
+      <p>Vehicles Sold</p>
+    </div>
+    <div class="stat-card">
+      <h2 id="avgVideo">0</h2>
+      <p>Avg Payout / Hour of Video</p>
+    </div>
+    <div class="stat-card">
+      <h2 id="avgImage">0</h2>
+      <p>Avg Payout per HD Image</p>
+    </div>
   </div>
-  <div class="stat-card">
-    <h2 id="avgImage">0</h2>
-    <p>Avg Payout per HD Image</p>
-  </div>
+
 </div>
 
 <div class="footer">
