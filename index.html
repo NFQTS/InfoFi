@@ -103,6 +103,7 @@
     color: #a0ffe0;
     margin: 1.5rem 0 3.5rem;
     white-space: pre;
+    min-height: 1.5em; /* prevent layout jump */
   }
 
   .cta-container {
@@ -173,11 +174,11 @@
     <span>It has just begun...</span>
   </h1>
 
-  <p class="subtitle">Something is coming...</p>
+  <p class="subtitle" id="animatedSubtitle">Something is coming</p>
 
   <div class="cta-container">
     <button class="cta-button" onclick="window.location.href='https://your-auction-page.com';">
-      Enter
+      🚗 Bid on the Sports Car
     </button>
   </div>
 </div>
@@ -185,6 +186,31 @@
 <div class="footer">
   Phase 0 • Limited • Decentralized
 </div>
+
+<script>
+// ────────────────────────
+// Animated "Something is coming..." dots
+// ────────────────────────
+const subtitleEl = document.getElementById('animatedSubtitle');
+let dotCount = 0;
+let forward = true;
+
+function animateDots() {
+  let dots = '.'.repeat(dotCount);
+  subtitleEl.textContent = 'Something is coming' + dots;
+
+  if (forward) {
+    dotCount++;
+    if (dotCount > 3) forward = false;
+  } else {
+    dotCount--;
+    if (dotCount < 0) forward = true;
+  }
+  setTimeout(animateDots, 500); // adjust speed of dots here
+}
+
+animateDots();
+</script>
 
 <script>
 // ────────────────────────
