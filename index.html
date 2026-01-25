@@ -17,8 +17,8 @@
       --neon-glow: 0 0 24px rgba(34, 197, 94, 0.65);
       --gold: #facc15;
       --silver: #a1a1aa;
-      --red: #ef4444;
       --tier2: #6366f1;
+      --mystery: #ec4899;
     }
 
     * {
@@ -92,13 +92,20 @@
       opacity: 0.9;
     }
 
-    .teams-section {
+    /* ---------- GRID LAYOUT ---------- */
+    .teams-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      grid-template-columns: 1fr 1fr;
       gap: 32px;
-      margin-bottom: 80px;
+      margin-bottom: 48px;
     }
 
+    .mystery-row {
+      display: flex;
+      justify-content: center;
+    }
+
+    /* ---------- CARD ---------- */
     .team-card {
       background: var(--panel);
       border-radius: 28px;
@@ -109,6 +116,8 @@
       box-shadow: 0 16px 48px rgba(0,0,0,0.45);
       position: relative;
       overflow: hidden;
+      width: 100%;
+      max-width: 520px;
     }
 
     .team-card:hover {
@@ -136,6 +145,12 @@
       -webkit-text-fill-color: transparent;
     }
 
+    .team-title.mystery {
+      background: linear-gradient(90deg, var(--mystery), #8b5cf6, #22c55e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
     .team-subtitle {
       font-size: 1rem;
       color: var(--subtle);
@@ -147,6 +162,10 @@
       font-weight: 800;
       margin-bottom: 0.8rem;
       color: var(--neon);
+    }
+
+    .price.mystery {
+      color: var(--mystery);
     }
 
     .spots {
@@ -173,6 +192,12 @@
       border: 1px solid rgba(99,102,241,0.35);
     }
 
+    .tier-badge.mystery {
+      background: rgba(236,72,153,0.2);
+      color: #fbcfe8;
+      border: 1px solid rgba(236,72,153,0.4);
+    }
+
     .progress-wrapper {
       margin: 0 auto 1.6rem;
       max-width: 260px;
@@ -191,6 +216,10 @@
       background: linear-gradient(90deg, var(--neon), #16a34a);
       width: 0%;
       transition: width 0.4s ease;
+    }
+
+    .progress-fill.mystery {
+      background: linear-gradient(90deg, var(--mystery), #8b5cf6, #22c55e);
     }
 
     .progress-label {
@@ -224,32 +253,75 @@
       font-weight: bold;
     }
 
-    .team-card button {
+    .team-card li.mystery:before {
+      content: '✦';
+      color: var(--mystery);
+    }
+
+    /* ---------- BUTTONS (UNIFIED) ---------- */
+    .action-button {
       display: block;
       width: 100%;
+      height: 58px;
       background: linear-gradient(135deg, var(--neon), #16a34a);
       color: #000;
       border: none;
-      padding: 18px;
       border-radius: 16px;
       font-weight: 800;
-      font-size: 1.15rem;
+      font-size: 1.05rem;
       cursor: pointer;
       transition: all 0.35s ease;
       box-shadow: 0 0 0 0 rgba(34,197,94,0.4);
-      animation: pulse 2.5s infinite;
     }
 
-    .team-card button.secondary {
+    .action-button:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--neon-glow);
+    }
+
+    .action-button.secondary {
       background: linear-gradient(135deg, #6366f1, #4338ca);
       color: #fff;
       box-shadow: 0 0 0 0 rgba(99,102,241,0.35);
-      animation: none;
     }
 
-    .team-card button:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--neon-glow);
+    .action-button.mystery {
+      background: linear-gradient(135deg, var(--mystery), #8b5cf6, #22c55e);
+      color: #fff;
+      box-shadow: 0 0 0 0 rgba(236,72,153,0.4);
+    }
+
+    /* ---------- LEADERBOARD ---------- */
+    .leaderboard {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      text-align: left;
+    }
+
+    .leaderboard h3 {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      color: #fbcfe8;
+      letter-spacing: 0.05em;
+    }
+
+    .leaderboard-list {
+      list-style: none;
+    }
+
+    .leaderboard-list li {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.95rem;
+      padding: 6px 0;
+      border-bottom: 1px dashed rgba(255,255,255,0.08);
+      color: #e5e7eb;
+    }
+
+    .leaderboard-list span {
+      color: var(--mystery);
+      font-weight: 700;
     }
 
     .footer-note {
@@ -258,17 +330,12 @@
       font-size: 0.95rem;
       line-height: 1.7;
       max-width: 760px;
-      margin: 0 auto;
+      margin: 80px auto 0;
       opacity: 0.9;
     }
 
-    @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
-      50%      { box-shadow: 0 0 0 16px rgba(34,197,94,0); }
-    }
-
-    @media (max-width: 768px) {
-      .teams-section {
+    @media (max-width: 900px) {
+      .teams-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -290,17 +357,18 @@
         Whichever team sells out first unlocks a bonus pool for everyone in Tier 1 on that side.
       </p>
       <p class="tagline">
-        Early supporters get rewarded more. Late supporters still get in.
+        Or skip both and unlock something nobody else knows about.
       </p>
     </section>
 
-    <section class="teams-section">
+    <!-- TOP ROW -->
+    <section class="teams-grid">
 
-      <!-- VISIONARY TEAM -->
+      <!-- VISIONARY -->
       <div class="team-card">
         <div class="team-title visionary">Visionary</div>
-        <div class="team-subtitle">The builders. The believers.</div>
-        <div class="price" id="visionaryPrice">69 MATIC</div>
+        <div class="team-subtitle">High stakes. High conviction.</div>
+        <div class="price" id="visionaryPrice">420 MATIC</div>
         <div class="spots">
           Tier 1 spots left: <strong><span id="visionarySpots">420</span></strong> / 420
           <div class="tier-badge" id="visionaryTierBadge">Tier 1</div>
@@ -314,20 +382,22 @@
         </div>
 
         <ul>
-          <li>Access to bonus pool if your team wins (Tier 1 only)</li>
+          <li>Bonus pool access if your team fills first (Tier 1)</li>
           <li>Early access to future drops & experiments</li>
           <li>Public badge: Visionary</li>
           <li>Bragging rights if you sell out first</li>
         </ul>
 
-        <button id="visionaryButton" onclick="handleSignup('visionary')">Join Visionary</button>
+        <button class="action-button" id="visionaryButton" onclick="handleSignup('visionary')">
+          Join Visionary
+        </button>
       </div>
 
-      <!-- UNDERDOG TEAM -->
+      <!-- UNDERDOG -->
       <div class="team-card">
         <div class="team-title underdog">Underdog</div>
-        <div class="team-subtitle">The grinders. The rebels.</div>
-        <div class="price" id="underdogPrice">420 MATIC</div>
+        <div class="team-subtitle">Low cost. High upside.</div>
+        <div class="price" id="underdogPrice">69 MATIC</div>
         <div class="spots">
           Tier 1 spots left: <strong><span id="underdogSpots">69</span></strong> / 69
           <div class="tier-badge" id="underdogTierBadge">Tier 1</div>
@@ -341,13 +411,58 @@
         </div>
 
         <ul>
-          <li>Access to bonus pool if your team wins (Tier 1 only)</li>
+          <li>Bonus pool access if your team fills first (Tier 1)</li>
           <li>Entry into future community challenges</li>
           <li>Public badge: Underdog</li>
           <li>Proof you backed the long shot</li>
         </ul>
 
-        <button id="underdogButton" onclick="handleSignup('underdog')">Join Underdog</button>
+        <button class="action-button" id="underdogButton" onclick="handleSignup('underdog')">
+          Join Underdog
+        </button>
+      </div>
+
+    </section>
+
+    <!-- MYSTERY ROW -->
+    <section class="mystery-row">
+
+      <div class="team-card">
+
+        <div class="team-title mystery">Mystery</div>
+        <div class="team-subtitle">For the coolest people only.</div>
+        <div class="price mystery">Any Amount</div>
+        <div class="spots">
+          No limits. No rules.
+          <div class="tier-badge mystery">Secret Tier</div>
+        </div>
+
+        <div class="progress-wrapper">
+          <div class="progress-bar">
+            <div class="progress-fill mystery" id="mysteryProgress"></div>
+          </div>
+          <div class="progress-label" id="mysteryProgressLabel">???% filled</div>
+        </div>
+
+        <ul>
+          <li class="mystery">Hidden rewards</li>
+          <li class="mystery">Surprise perks unlocked later</li>
+          <li class="mystery">Unannounced access</li>
+          <li class="mystery">Vibes only</li>
+        </ul>
+
+        <button class="action-button mystery" onclick="handleMystery()">
+          Enter the Unknown
+        </button>
+
+        <!-- LEADERBOARD -->
+        <div class="leaderboard">
+          <h3>TOP MYSTERY SUPPORTERS</h3>
+          <ul class="leaderboard-list" id="mysteryLeaderboard">
+            <li><em>No mystery supporters yet.</em></li>
+          </ul>
+        </div>
+
       </div>
 
     </section>
@@ -369,18 +484,21 @@
 
     const TEAM_CONFIG = {
       visionary: {
-        priceMatic: 69,
+        priceMatic: 420,
         totalSpots: 420,
         spotsLeft: 420,
         tier1Filled: false,
         tier2Count: 0
       },
       underdog: {
-        priceMatic: 420,
+        priceMatic: 69,
         totalSpots: 69,
         spotsLeft: 69,
         tier1Filled: false,
         tier2Count: 0
+      },
+      mystery: {
+        donations: [] // { wallet, amount }
       }
     };
 
@@ -397,11 +515,9 @@
       const isTier1 = teamData.spotsLeft > 0;
 
       try {
-        // Connect wallet
         const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
         const sender = accounts[0];
 
-        // Switch to Polygon
         await ethereum.request({
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: POLYGON_CHAIN_ID }]
@@ -421,7 +537,6 @@
           params: [txParams],
         });
 
-        // Update state
         if (isTier1) {
           teamData.spotsLeft--;
           if (teamData.spotsLeft === 0) {
@@ -445,12 +560,62 @@
       }
     }
 
+    async function handleMystery() {
+      if (!window.ethereum) {
+        alert("Please install MetaMask or a Web3 wallet to continue.");
+        return;
+      }
+
+      const amount = prompt("Enter the amount of MATIC you want to donate:");
+      if (!amount || isNaN(amount) || Number(amount) <= 0) {
+        alert("Please enter a valid amount.");
+        return;
+      }
+
+      try {
+        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        const sender = accounts[0];
+
+        await ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: POLYGON_CHAIN_ID }]
+        });
+
+        const valueWei = "0x" + (Number(amount) * 1e18).toString(16);
+
+        const txParams = {
+          from: sender,
+          to: RECEIVER_ADDRESS,
+          value: valueWei
+        };
+
+        await ethereum.request({
+          method: 'eth_sendTransaction',
+          params: [txParams],
+        });
+
+        TEAM_CONFIG.mystery.donations.push({
+          wallet: sender,
+          amount: Number(amount)
+        });
+
+        updateUI();
+
+        alert("You’ve entered the mystery tier. Something cool is coming. 😎");
+
+      } catch (err) {
+        console.error(err);
+        alert("Transaction failed or was cancelled.");
+      }
+    }
+
     /**********************
      * UI UPDATE LOGIC
      **********************/
     function updateUI() {
       updateTeamUI("visionary");
       updateTeamUI("underdog");
+      updateMysteryUI();
     }
 
     function updateTeamUI(team) {
@@ -478,7 +643,33 @@
       }
     }
 
-    // Initial UI render
+    function updateMysteryUI() {
+      const list = TEAM_CONFIG.mystery.donations
+        .sort((a, b) => b.amount - a.amount)
+        .slice(0, 10);
+
+      const leaderboard = document.getElementById("mysteryLeaderboard");
+      leaderboard.innerHTML = "";
+
+      if (list.length === 0) {
+        leaderboard.innerHTML = "<li><em>No mystery supporters yet.</em></li>";
+        document.getElementById("mysteryProgressLabel").textContent = "???% filled";
+        document.getElementById("mysteryProgress").style.width = "0%";
+        return;
+      }
+
+      list.forEach((entry, index) => {
+        const masked = entry.wallet.slice(0, 6) + "..." + entry.wallet.slice(-4);
+        const li = document.createElement("li");
+        li.innerHTML = `#${index + 1} ${masked} <span>${entry.amount} MATIC</span>`;
+        leaderboard.appendChild(li);
+      });
+
+      const percent = Math.min(100, TEAM_CONFIG.mystery.donations.length * 7);
+      document.getElementById("mysteryProgress").style.width = percent + "%";
+      document.getElementById("mysteryProgressLabel").textContent = `${percent}% filled`;
+    }
+
     updateUI();
   </script>
 
