@@ -1,677 +1,265 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pick Your Side. Fill It First.</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #060609;
-      --panel: rgba(18, 18, 20, 0.85);
-      --accent: #ffffff;
-      --subtle: #a1a1aa;
-      --neon: #22c55e;
-      --neon-glow: 0 0 24px rgba(34, 197, 94, 0.65);
-      --gold: #facc15;
-      --silver: #a1a1aa;
-      --tier2: #6366f1;
-      --mystery: #ec4899;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', system-ui, sans-serif;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--accent);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      padding: 20px clamp(20px, 6vw, 48px);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      display: flex;
-      justify-content: center;
-    }
-
-    .logo {
-      font-size: clamp(1.3rem, 4vw, 1.7rem);
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      background: linear-gradient(90deg, #fff, var(--neon));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      white-space: nowrap;
-    }
-
-    main {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: clamp(60px, 10vw, 120px) clamp(20px, 6vw, 48px) 140px;
-    }
-
-    .hero {
-      text-align: center;
-      max-width: 760px;
-      margin: 0 auto 72px;
-    }
-
-    .hero h1 {
-      font-size: clamp(2.8rem, 7vw, 4.6rem);
-      font-weight: 800;
-      line-height: 1.05;
-      letter-spacing: -0.03em;
-      margin-bottom: 1.2rem;
-      background: linear-gradient(90deg, #fff, var(--neon));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero p {
-      font-size: clamp(1.1rem, 2.8vw, 1.35rem);
-      color: var(--subtle);
-      line-height: 1.55;
-      margin-bottom: 2.5rem;
-    }
-
-    .hero .tagline {
-      font-size: 1rem;
-      color: var(--subtle);
-      opacity: 0.9;
-    }
-
-    /* ---------- GRID LAYOUT ---------- */
-    .teams-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 32px;
-      margin-bottom: 48px;
-    }
-
-    .mystery-row {
-      display: flex;
-      justify-content: center;
-    }
-
-    /* ---------- CARD ---------- */
-    .team-card {
-      background: var(--panel);
-      border-radius: 28px;
-      padding: 40px 32px;
-      border: 1px solid rgba(255,255,255,0.08);
-      text-align: center;
-      transition: all 0.4s ease;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.45);
-      position: relative;
-      overflow: hidden;
-      width: 100%;
-      max-width: 520px;
-    }
-
-    .team-card:hover {
-      transform: translateY(-6px);
-      box-shadow: var(--neon-glow);
-      border-color: rgba(34,197,94,0.3);
-    }
-
-    .team-title {
-      font-size: 2.2rem;
-      font-weight: 800;
-      margin-bottom: 0.4rem;
-      letter-spacing: -0.02em;
-    }
-
-    .team-title.visionary {
-      background: linear-gradient(90deg, var(--gold), var(--neon));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .team-title.underdog {
-      background: linear-gradient(90deg, var(--silver), var(--neon));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .team-title.mystery {
-      background: linear-gradient(90deg, var(--mystery), #8b5cf6, #22c55e);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .team-subtitle {
-      font-size: 1rem;
-      color: var(--subtle);
-      margin-bottom: 1.4rem;
-    }
-
-    .price {
-      font-size: 3.2rem;
-      font-weight: 800;
-      margin-bottom: 0.8rem;
-      color: var(--neon);
-    }
-
-    .price.mystery {
-      color: var(--mystery);
-    }
-
-    .spots {
-      font-size: 1.05rem;
-      color: var(--subtle);
-      margin-bottom: 1.6rem;
-      font-weight: 500;
-    }
-
-    .tier-badge {
-      display: inline-block;
-      margin-top: 6px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 6px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      color: var(--subtle);
-    }
-
-    .tier-badge.secondary {
-      background: rgba(99,102,241,0.2);
-      color: #c7d2fe;
-      border: 1px solid rgba(99,102,241,0.35);
-    }
-
-    .tier-badge.mystery {
-      background: rgba(236,72,153,0.2);
-      color: #fbcfe8;
-      border: 1px solid rgba(236,72,153,0.4);
-    }
-
-    .progress-wrapper {
-      margin: 0 auto 1.6rem;
-      max-width: 260px;
-    }
-
-    .progress-bar {
-      height: 14px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 999px;
-      overflow: hidden;
-      box-shadow: inset 0 0 8px rgba(0,0,0,0.6);
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--neon), #16a34a);
-      width: 0%;
-      transition: width 0.4s ease;
-    }
-
-    .progress-fill.mystery {
-      background: linear-gradient(90deg, var(--mystery), #8b5cf6, #22c55e);
-    }
-
-    .progress-label {
-      font-size: 0.85rem;
-      color: var(--subtle);
-      margin-top: 6px;
-    }
-
-    .team-card ul {
-      list-style: none;
-      margin-bottom: 2.2rem;
-      text-align: left;
-      max-width: 90%;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .team-card li {
-      font-size: 1rem;
-      color: var(--accent);
-      margin-bottom: 0.7rem;
-      position: relative;
-      padding-left: 22px;
-    }
-
-    .team-card li:before {
-      content: '✓';
-      position: absolute;
-      left: 0;
-      color: var(--neon);
-      font-weight: bold;
-    }
-
-    .team-card li.mystery:before {
-      content: '✦';
-      color: var(--mystery);
-    }
-
-    /* ---------- BUTTONS (UNIFIED) ---------- */
-    .action-button {
-      display: block;
-      width: 100%;
-      height: 58px;
-      background: linear-gradient(135deg, var(--neon), #16a34a);
-      color: #000;
-      border: none;
-      border-radius: 16px;
-      font-weight: 800;
-      font-size: 1.05rem;
-      cursor: pointer;
-      transition: all 0.35s ease;
-      box-shadow: 0 0 0 0 rgba(34,197,94,0.4);
-    }
-
-    .action-button:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--neon-glow);
-    }
-
-    .action-button.secondary {
-      background: linear-gradient(135deg, #6366f1, #4338ca);
-      color: #fff;
-      box-shadow: 0 0 0 0 rgba(99,102,241,0.35);
-    }
-
-    .action-button.mystery {
-      background: linear-gradient(135deg, var(--mystery), #8b5cf6, #22c55e);
-      color: #fff;
-      box-shadow: 0 0 0 0 rgba(236,72,153,0.4);
-    }
-
-    /* ---------- LEADERBOARD ---------- */
-    .leaderboard {
-      margin-top: 32px;
-      padding-top: 24px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      text-align: left;
-    }
-
-    .leaderboard h3 {
-      font-size: 1.1rem;
-      margin-bottom: 12px;
-      color: #fbcfe8;
-      letter-spacing: 0.05em;
-    }
-
-    .leaderboard-list {
-      list-style: none;
-    }
-
-    .leaderboard-list li {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.95rem;
-      padding: 6px 0;
-      border-bottom: 1px dashed rgba(255,255,255,0.08);
-      color: #e5e7eb;
-    }
-
-    .leaderboard-list span {
-      color: var(--mystery);
-      font-weight: 700;
-    }
-
-    .footer-note {
-      text-align: center;
-      color: var(--subtle);
-      font-size: 0.95rem;
-      line-height: 1.7;
-      max-width: 760px;
-      margin: 80px auto 0;
-      opacity: 0.9;
-    }
-
-    @media (max-width: 900px) {
-      .teams-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>· · · · ·</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Press+Start+2P&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            overflow: hidden;
+            background: #000;
+            color: #0ff;
+            font-family: 'Orbitron', sans-serif;
+            height: 100vh;
+            position: relative;
+        }
+        
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; }
+        
+        .content {
+            position: relative;
+            z-index: 2;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: 0.5em;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 20px #0ff;
+            opacity: 0;
+            animation: glow 2s infinite alternate;
+        }
+        
+        .teaser {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.1rem;
+            margin: 1.5rem 0;
+            min-height: 80px;
+            opacity: 0;
+            transition: all 0.8s ease;
+            text-shadow: 0 0 15px #f0f;
+        }
+        
+        .reveal {
+            font-size: 3.5rem;
+            font-weight: 900;
+            letter-spacing: 0.2em;
+            margin: 3rem 0 2rem;
+            opacity: 0;
+            text-shadow: 0 0 40px #ff0;
+            animation: pulse 3s infinite;
+        }
+        
+        .blurred-art {
+            width: 320px;
+            height: 320px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid #0ff;
+            box-shadow: 0 0 60px rgba(0, 255, 255, 0.6);
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+            transition: all 1s ease;
+        }
+        
+        .blurred-art::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: scan 4s linear infinite;
+        }
+        
+        .blurred-art img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(20px) brightness(0.6);
+            transition: filter 1.5s ease;
+        }
+        
+        .active .blurred-art img { filter: blur(8px) brightness(1.2); }
+        
+        .scanline {
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(transparent, #0ff, transparent);
+            animation: scanline-anim 6s linear infinite;
+            opacity: 0.3;
+        }
+        
+        @keyframes glow { from { text-shadow: 0 0 10px #0ff; } to { text-shadow: 0 0 40px #0ff; } }
+        @keyframes pulse { 0%,100% { opacity: 0.7; } 50% { opacity: 1; } }
+        @keyframes scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+        @keyframes scanline-anim { 0% { top: -100%; } 100% { top: 300%; } }
+        
+        .footer {
+            position: absolute;
+            bottom: 30px;
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            opacity: 0.6;
+        }
+    </style>
 </head>
 <body>
-
-  <header>
-    <div class="logo">PICK A SIDE</div>
-  </header>
-
-  <main>
-
-    <section class="hero">
-      <h1>Pick Your Side.<br>Fill It First.</h1>
-      <p>
-        Two teams. Limited spots. One winner.
-        <br><br>
-        Whichever team sells out first unlocks a bonus pool for everyone in Tier 1 on that side.
-      </p>
-      <p class="tagline">
-        Or skip both and unlock something nobody else knows about.
-      </p>
-    </section>
-
-    <!-- TOP ROW -->
-    <section class="teams-grid">
-
-      <!-- VISIONARY -->
-      <div class="team-card">
-        <div class="team-title visionary">Visionary</div>
-        <div class="team-subtitle">High stakes. High conviction.</div>
-        <div class="price" id="visionaryPrice">420 MATIC</div>
-        <div class="spots">
-          Tier 1 spots left: <strong><span id="visionarySpots">420</span></strong> / 420
-          <div class="tier-badge" id="visionaryTierBadge">Tier 1</div>
+    <canvas id="space"></canvas>
+    
+    <div class="content">
+        <div class="logo">UNPRINCIPLED INC.</div>
+        
+        <div class="blurred-art" id="artContainer">
+            <div class="scanline"></div>
+            <!-- Replace these placeholder srcs with your actual blurred images later -->
+            <img id="art1" src="https://picsum.photos/id/1015/600/600" alt="Lords">
+            <img id="art2" src="https://picsum.photos/id/102/600/600" alt="Nobles" style="display:none;">
+            <img id="art3" src="https://picsum.photos/id/1036/600/600" alt="Peasants" style="display:none;">
         </div>
-
-        <div class="progress-wrapper">
-          <div class="progress-bar">
-            <div class="progress-fill" id="visionaryProgress"></div>
-          </div>
-          <div class="progress-label" id="visionaryProgressLabel">0% filled</div>
-        </div>
-
-        <ul>
-          <li>Bonus pool access if your team fills first (Tier 1)</li>
-          <li>Early access to future drops & experiments</li>
-          <li>Public badge: Visionary</li>
-          <li>Bragging rights if you sell out first</li>
-        </ul>
-
-        <button class="action-button" id="visionaryButton" onclick="handleSignup('visionary')">
-          Join Visionary
-        </button>
-      </div>
-
-      <!-- UNDERDOG -->
-      <div class="team-card">
-        <div class="team-title underdog">Underdog</div>
-        <div class="team-subtitle">Low cost. High upside.</div>
-        <div class="price" id="underdogPrice">69 MATIC</div>
-        <div class="spots">
-          Tier 1 spots left: <strong><span id="underdogSpots">69</span></strong> / 69
-          <div class="tier-badge" id="underdogTierBadge">Tier 1</div>
-        </div>
-
-        <div class="progress-wrapper">
-          <div class="progress-bar">
-            <div class="progress-fill" id="underdogProgress"></div>
-          </div>
-          <div class="progress-label" id="underdogProgressLabel">0% filled</div>
-        </div>
-
-        <ul>
-          <li>Bonus pool access if your team fills first (Tier 1)</li>
-          <li>Entry into future community challenges</li>
-          <li>Public badge: Underdog</li>
-          <li>Proof you backed the long shot</li>
-        </ul>
-
-        <button class="action-button" id="underdogButton" onclick="handleSignup('underdog')">
-          Join Underdog
-        </button>
-      </div>
-
-    </section>
-
-    <!-- MYSTERY ROW -->
-    <section class="mystery-row">
-
-      <div class="team-card">
-
-        <div class="team-title mystery">Mystery</div>
-        <div class="team-subtitle">For the coolest people only.</div>
-        <div class="price mystery">Any Amount</div>
-        <div class="spots">
-          No limits. No rules.
-          <div class="tier-badge mystery">Secret Tier</div>
-        </div>
-
-        <div class="progress-wrapper">
-          <div class="progress-bar">
-            <div class="progress-fill mystery" id="mysteryProgress"></div>
-          </div>
-          <div class="progress-label" id="mysteryProgressLabel">???% filled</div>
-        </div>
-
-        <ul>
-          <li class="mystery">Hidden rewards</li>
-          <li class="mystery">Surprise perks unlocked later</li>
-          <li class="mystery">Unannounced access</li>
-          <li class="mystery">Vibes only</li>
-        </ul>
-
-        <button class="action-button mystery" onclick="handleMystery()">
-          Enter the Unknown
-        </button>
-
-        <!-- LEADERBOARD -->
-        <div class="leaderboard">
-          <h3>TOP MYSTERY SUPPORTERS</h3>
-          <ul class="leaderboard-list" id="mysteryLeaderboard">
-            <li><em>No mystery supporters yet.</em></li>
-          </ul>
-        </div>
-
-      </div>
-
-    </section>
-
-    <div class="footer-note">
-      Payments are sent directly on-chain to the project wallet. No middlemen. No hidden fees.
-      <br>
-      Tier 1 spots are limited. After Tier 1 fills, all new supporters enter Tier 2 (still allowed, fewer perks).
+        
+        <div class="teaser" id="teaser">333 LORDS AND LADIES</div>
+        
+        <div class="reveal" id="reveal">SOMETHING IS COMING…</div>
+        
+        <div class="footer">SOLANA • EST. 2026 • TRANSMISSION ACTIVE</div>
     </div>
 
-  </main>
-
-  <script>
-    /**********************
-     * CONFIG
-     **********************/
-    const RECEIVER_ADDRESS = "0xYOUR_WALLET_HERE"; // <-- Replace this
-    const POLYGON_CHAIN_ID = "0x89";
-
-    const TEAM_CONFIG = {
-      visionary: {
-        priceMatic: 420,
-        totalSpots: 420,
-        spotsLeft: 420,
-        tier1Filled: false,
-        tier2Count: 0
-      },
-      underdog: {
-        priceMatic: 69,
-        totalSpots: 69,
-        spotsLeft: 69,
-        tier1Filled: false,
-        tier2Count: 0
-      },
-      mystery: {
-        donations: [] // { wallet, amount }
-      }
-    };
-
-    /**********************
-     * WALLET + PAYMENT
-     **********************/
-    async function handleSignup(team) {
-      if (!window.ethereum) {
-        alert("Please install MetaMask or a Web3 wallet to continue.");
-        return;
-      }
-
-      const teamData = TEAM_CONFIG[team];
-      const isTier1 = teamData.spotsLeft > 0;
-
-      try {
-        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-        const sender = accounts[0];
-
-        await ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: POLYGON_CHAIN_ID }]
-        });
-
-        const priceMatic = teamData.priceMatic;
-        const valueWei = "0x" + (priceMatic * 1e18).toString(16);
-
-        const txParams = {
-          from: sender,
-          to: RECEIVER_ADDRESS,
-          value: valueWei
-        };
-
-        await ethereum.request({
-          method: 'eth_sendTransaction',
-          params: [txParams],
-        });
-
-        if (isTier1) {
-          teamData.spotsLeft--;
-          if (teamData.spotsLeft === 0) {
-            teamData.tier1Filled = true;
-          }
-        } else {
-          teamData.tier2Count++;
+    <script>
+        // Three.js Starfield - Flying through space
+        let scene, camera, renderer;
+        let particles;
+        
+        function initSpace() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('space'), alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            
+            // Stars
+            const geometry = new THREE.BufferGeometry();
+            const vertices = [];
+            const colors = [];
+            
+            for (let i = 0; i < 8000; i++) {
+                const x = Math.random() * 2000 - 1000;
+                const y = Math.random() * 2000 - 1000;
+                const z = Math.random() * 2000 - 1000;
+                vertices.push(x, y, z);
+                
+                // Neon space colors
+                const color = Math.random() > 0.7 ? new THREE.Color(0x00ffff) : 
+                             (Math.random() > 0.5 ? new THREE.Color(0xff00ff) : new THREE.Color(0xffff00));
+                colors.push(color.r, color.g, color.b);
+            }
+            
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+            
+            const material = new THREE.PointsMaterial({
+                size: 1.8,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.9,
+                blending: THREE.AdditiveBlending
+            });
+            
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+            camera.position.z = 1;
         }
-
-        updateUI();
-
-        alert(
-          isTier1
-            ? `Welcome to the ${team.toUpperCase()} team — Tier 1 secured!`
-            : `Welcome to the ${team.toUpperCase()} team — you're in Tier 2.`
-        );
-
-      } catch (err) {
-        console.error(err);
-        alert("Transaction failed or was cancelled.");
-      }
-    }
-
-    async function handleMystery() {
-      if (!window.ethereum) {
-        alert("Please install MetaMask or a Web3 wallet to continue.");
-        return;
-      }
-
-      const amount = prompt("Enter the amount of MATIC you want to donate:");
-      if (!amount || isNaN(amount) || Number(amount) <= 0) {
-        alert("Please enter a valid amount.");
-        return;
-      }
-
-      try {
-        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-        const sender = accounts[0];
-
-        await ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: POLYGON_CHAIN_ID }]
+        
+        function animateSpace() {
+            requestAnimationFrame(animateSpace);
+            
+            // Fly forward effect
+            particles.rotation.y += 0.0001;
+            const positions = particles.geometry.attributes.position.array;
+            for (let i = 2; i < positions.length; i += 3) {
+                positions[i] += 3; // speed
+                if (positions[i] > 1000) positions[i] = -1000;
+            }
+            particles.geometry.attributes.position.needsUpdate = true;
+            
+            renderer.render(scene, camera);
+        }
+        
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
         });
-
-        const valueWei = "0x" + (Number(amount) * 1e18).toString(16);
-
-        const txParams = {
-          from: sender,
-          to: RECEIVER_ADDRESS,
-          value: valueWei
+        
+        // Teaser cycling
+        const teasers = [
+            { text: "333 LORDS AND LADIES", imgId: "art1" },
+            { text: "666 NOBLES", imgId: "art2" },
+            { text: "999 PEASANTS", imgId: "art3" }
+        ];
+        let current = 0;
+        const teaserEl = document.getElementById('teaser');
+        const artContainer = document.getElementById('artContainer');
+        
+        function cycleTeaser() {
+            current = (current + 1) % teasers.length;
+            
+            // Fade out
+            teaserEl.style.opacity = 0;
+            artContainer.classList.remove('active');
+            
+            setTimeout(() => {
+                teaserEl.textContent = teasers[current].text;
+                
+                // Switch images
+                document.querySelectorAll('#artContainer img').forEach(img => img.style.display = 'none');
+                document.getElementById(teasers[current].imgId).style.display = 'block';
+                
+                // Fade in
+                teaserEl.style.opacity = 1;
+                artContainer.classList.add('active');
+            }, 800);
+        }
+        
+        // Initial setup & timings for suspense
+        window.onload = () => {
+            initSpace();
+            animateSpace();
+            
+            // Initial fade-ins
+            setTimeout(() => {
+                document.querySelector('.logo').style.opacity = 1;
+            }, 800);
+            
+            setTimeout(() => {
+                artContainer.classList.add('active');
+                teaserEl.style.opacity = 1;
+                document.getElementById('reveal').style.opacity = 1;
+            }, 1800);
+            
+            // Cycle teasers every 5 seconds
+            setInterval(cycleTeaser, 5200);
+            
+            // Occasional random "glitch" on reveal text
+            setInterval(() => {
+                const reveal = document.getElementById('reveal');
+                reveal.style.transform = 'scale(1.05)';
+                setTimeout(() => reveal.style.transform = 'scale(1)', 180);
+            }, 7000);
         };
-
-        await ethereum.request({
-          method: 'eth_sendTransaction',
-          params: [txParams],
-        });
-
-        TEAM_CONFIG.mystery.donations.push({
-          wallet: sender,
-          amount: Number(amount)
-        });
-
-        updateUI();
-
-        alert("You’ve entered the mystery tier. Something cool is coming. 😎");
-
-      } catch (err) {
-        console.error(err);
-        alert("Transaction failed or was cancelled.");
-      }
-    }
-
-    /**********************
-     * UI UPDATE LOGIC
-     **********************/
-    function updateUI() {
-      updateTeamUI("visionary");
-      updateTeamUI("underdog");
-      updateMysteryUI();
-    }
-
-    function updateTeamUI(team) {
-      const t = TEAM_CONFIG[team];
-      const filled = t.totalSpots - t.spotsLeft;
-      const percent = Math.round((filled / t.totalSpots) * 100);
-
-      document.getElementById(`${team}Spots`).textContent = t.spotsLeft;
-      document.getElementById(`${team}Progress`).style.width = percent + "%";
-      document.getElementById(`${team}ProgressLabel`).textContent = `${percent}% filled`;
-
-      const badge = document.getElementById(`${team}TierBadge`);
-      const button = document.getElementById(`${team}Button`);
-
-      if (t.spotsLeft === 0) {
-        badge.textContent = "Tier 2";
-        badge.classList.add("secondary");
-        button.textContent = "Join Tier 2";
-        button.classList.add("secondary");
-      } else {
-        badge.textContent = "Tier 1";
-        badge.classList.remove("secondary");
-        button.textContent = "Join " + team.charAt(0).toUpperCase() + team.slice(1);
-        button.classList.remove("secondary");
-      }
-    }
-
-    function updateMysteryUI() {
-      const list = TEAM_CONFIG.mystery.donations
-        .sort((a, b) => b.amount - a.amount)
-        .slice(0, 10);
-
-      const leaderboard = document.getElementById("mysteryLeaderboard");
-      leaderboard.innerHTML = "";
-
-      if (list.length === 0) {
-        leaderboard.innerHTML = "<li><em>No mystery supporters yet.</em></li>";
-        document.getElementById("mysteryProgressLabel").textContent = "???% filled";
-        document.getElementById("mysteryProgress").style.width = "0%";
-        return;
-      }
-
-      list.forEach((entry, index) => {
-        const masked = entry.wallet.slice(0, 6) + "..." + entry.wallet.slice(-4);
-        const li = document.createElement("li");
-        li.innerHTML = `#${index + 1} ${masked} <span>${entry.amount} MATIC</span>`;
-        leaderboard.appendChild(li);
-      });
-
-      const percent = Math.min(100, TEAM_CONFIG.mystery.donations.length * 7);
-      document.getElementById("mysteryProgress").style.width = percent + "%";
-      document.getElementById("mysteryProgressLabel").textContent = `${percent}% filled`;
-    }
-
-    updateUI();
-  </script>
-
+    </script>
 </body>
 </html>
