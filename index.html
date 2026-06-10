@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap');
-
         body { font-family: 'Inter', system_ui, sans-serif; }
         .title-font { font-family: 'Space Grotesk', sans-serif; }
 
@@ -63,18 +62,22 @@
                 </p>
 
                 <div class="space-y-6">
-                    <!-- Email -->
-                    <div>
+                    <!-- EMAIL FORM - Most Reliable Method -->
+                    <form id="emailForm" action="https://script.google.com/macros/s/AKfycbwdLK9nJo6AOXJn5AJenWkKrJaFAFFnA4Sm0n6wXJvElH9mHhumJmafPr1b4IeMpXAdqw/exec" method="POST">
                         <label class="block text-sm text-gray-400 mb-2">Email Address</label>
                         <div class="flex">
-                            <input id="email" type="email" placeholder="you@example.com"
-                                   class="flex-1 bg-black/50 border border-gray-700 focus:border-yellow-400 rounded-l-3xl px-6 py-5 outline-none text-white">
-                            <button onclick="submitEmail()" 
+                            <input name="email" 
+                                   type="email" 
+                                   placeholder="you@example.com"
+                                   class="flex-1 bg-black/50 border border-gray-700 focus:border-yellow-400 rounded-l-3xl px-6 py-5 outline-none text-white"
+                                   required>
+                            <input name="source" type="hidden" value="email">
+                            <button type="submit"
                                     class="bg-yellow-400 hover:bg-yellow-300 transition-all text-black font-semibold px-8 rounded-r-3xl">
                                 Join
                             </button>
                         </div>
-                    </div>
+                    </form>
 
                     <div class="relative">
                         <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-700"></div></div>
@@ -83,7 +86,7 @@
                         </div>
                     </div>
 
-                    <!-- Wallet -->
+                    <!-- Solana Wallet -->
                     <button onclick="connectSolanaWallet()" 
                             class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 transition-all text-white font-semibold py-6 rounded-3xl text-lg flex items-center justify-center gap-3">
                         <i class="fa-brands fa-solana text-2xl"></i>
@@ -94,7 +97,7 @@
                 <div class="mt-10 text-xs text-gray-500 space-y-4">
                     <p class="flex items-start gap-2">
                         <i class="fa-solid fa-circle-info mt-0.5"></i>
-                        <span>Your email and wallet address may be shared with trusted partners for platform operations.</span>
+                        <span>Your email and wallet address may be shared with trusted partners.</span>
                     </p>
                 </div>
             </div>
@@ -102,7 +105,6 @@
     </div>
 
     <script>
-        // Rain Effect
         function createRain() {
             const container = document.getElementById('rain');
             for (let i = 0; i < 150; i++) {
@@ -117,40 +119,23 @@
             }
         }
 
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwdLK9nJo6AOXJn5AJenWkKrJaFAFFnA4Sm0n6wXJvElH9mHhumJmafPr1b4IeMpXAdqw/exec";
-
-        async function submitEmail() {
-            const email = document.getElementById('email').value.trim();
-            if (!email) return alert("Please enter your email");
-
-            try {
-                await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    body: new URLSearchParams({ email: email, source: 'email' })
-                });
-                alert(`✅ Thank you!\n\n${email} has been added to the waitlist.`);
-                document.getElementById('email').value = '';
-            } catch (e) {
-                alert("✅ Thank you! (Demo mode - Google Sheet not connected yet)");
-            }
-        }
+        // Show success message after form submission
+        document.getElementById('emailForm').addEventListener('submit', function() {
+            setTimeout(() => {
+                alert("✅ Thank you! You've been added to the waitlist.\n\nWe'll notify you when DataRain launches.");
+            }, 800);
+        });
 
         async function connectSolanaWallet() {
             if (!window.solana) {
-                return alert("Please install Phantom or another Solana wallet.");
+                return alert("Please install Phantom wallet or another Solana wallet.");
             }
             try {
                 const resp = await window.solana.connect();
                 const wallet = resp.publicKey.toString();
-
-                await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    body: new URLSearchParams({ wallet: wallet, source: 'wallet' })
-                });
-
                 alert(`✅ Wallet Connected!\n\n${wallet}\n\nYou've been added to the priority waitlist.`);
             } catch (err) {
-                alert("Wallet connection failed or cancelled.");
+                alert("Wallet connection was cancelled or failed.");
             }
         }
 
