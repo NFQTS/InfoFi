@@ -1,265 +1,160 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>· · · · ·</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <title>Share Info, Get Paid</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Press+Start+2P&display=swap');
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            overflow: hidden;
-            background: #000;
-            color: #0ff;
-            font-family: 'Orbitron', sans-serif;
-            height: 100vh;
-            position: relative;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap');
+
+        body { font-family: 'Inter', system_ui, sans-serif; }
+        .title-font { font-family: 'Space Grotesk', sans-serif; }
+
+        .rain-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; z-index: -1;
+            background: linear-gradient(to bottom, #0a0a0a, #1a1a2e);
         }
-        
-        canvas { position: absolute; top: 0; left: 0; z-index: 1; }
-        
-        .content {
-            position: relative;
-            z-index: 2;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 20px;
+        .rain-drop {
+            position: absolute; width: 2px; height: 50px;
+            background: linear-gradient(transparent, rgba(255,255,255,0.8));
+            animation: fall linear infinite;
         }
-        
-        .logo {
-            font-size: 2.5rem;
-            font-weight: 900;
-            letter-spacing: 0.5em;
-            margin-bottom: 2rem;
-            text-shadow: 0 0 20px #0ff;
-            opacity: 0;
-            animation: glow 2s infinite alternate;
-        }
-        
-        .teaser {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 1.1rem;
-            margin: 1.5rem 0;
-            min-height: 80px;
-            opacity: 0;
-            transition: all 0.8s ease;
-            text-shadow: 0 0 15px #f0f;
-        }
-        
-        .reveal {
-            font-size: 3.5rem;
-            font-weight: 900;
-            letter-spacing: 0.2em;
-            margin: 3rem 0 2rem;
-            opacity: 0;
-            text-shadow: 0 0 40px #ff0;
-            animation: pulse 3s infinite;
-        }
-        
-        .blurred-art {
-            width: 320px;
-            height: 320px;
-            background: rgba(255,255,255,0.05);
-            border: 2px solid #0ff;
-            box-shadow: 0 0 60px rgba(0, 255, 255, 0.6);
-            margin: 2rem 0;
-            position: relative;
-            overflow: hidden;
-            transition: all 1s ease;
-        }
-        
-        .blurred-art::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-            animation: scan 4s linear infinite;
-        }
-        
-        .blurred-art img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: blur(20px) brightness(0.6);
-            transition: filter 1.5s ease;
-        }
-        
-        .active .blurred-art img { filter: blur(8px) brightness(1.2); }
-        
-        .scanline {
-            position: absolute;
-            top: -100%;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(transparent, #0ff, transparent);
-            animation: scanline-anim 6s linear infinite;
-            opacity: 0.3;
-        }
-        
-        @keyframes glow { from { text-shadow: 0 0 10px #0ff; } to { text-shadow: 0 0 40px #0ff; } }
-        @keyframes pulse { 0%,100% { opacity: 0.7; } 50% { opacity: 1; } }
-        @keyframes scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
-        @keyframes scanline-anim { 0% { top: -100%; } 100% { top: 300%; } }
-        
-        .footer {
-            position: absolute;
-            bottom: 30px;
-            font-size: 0.8rem;
-            letter-spacing: 3px;
-            opacity: 0.6;
+        @keyframes fall { to { transform: translateY(100vh); } }
+        .glass {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
         }
     </style>
 </head>
-<body>
-    <canvas id="space"></canvas>
-    
-    <div class="content">
-        <div class="logo">UNPRINCIPLED INC.</div>
+<body class="bg-black text-white min-h-screen overflow-x-hidden">
+
+    <div id="rain" class="rain-container"></div>
+
+    <div class="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 py-16">
         
-        <div class="blurred-art" id="artContainer">
-            <div class="scanline"></div>
-            <!-- Replace these placeholder srcs with your actual blurred images later -->
-            <img id="art1" src="https://picsum.photos/id/1015/600/600" alt="Lords">
-            <img id="art2" src="https://picsum.photos/id/102/600/600" alt="Nobles" style="display:none;">
-            <img id="art3" src="https://picsum.photos/id/1036/600/600" alt="Peasants" style="display:none;">
+        <div class="absolute top-8 left-1/2 -translate-x-1/2 flex items-center gap-3">
+            <div class="w-9 h-9 bg-yellow-400 rounded-2xl flex items-center justify-center text-black font-bold text-2xl">D</div>
         </div>
-        
-        <div class="teaser" id="teaser">333 LORDS AND LADIES</div>
-        
-        <div class="reveal" id="reveal">SOMETHING IS COMING…</div>
-        
-        <div class="footer">SOLANA • EST. 2026 • TRANSMISSION ACTIVE</div>
+
+        <div class="max-w-2xl w-full text-center mt-20">
+            <h1 class="text-7xl md:text-8xl font-bold title-font leading-none tracking-tighter">
+                Share info<br>
+                <span class="text-yellow-400">Get paid</span>
+            </h1>
+            
+            <p class="mt-8 text-2xl text-gray-300 max-w-lg mx-auto leading-tight">
+                We help you sell your data directly to AI companies and advertisers.<br>
+                <span class="text-gray-400">You stay in control and earn every time your data is sold.</span>
+            </p>
+
+            <!-- Waitlist Signup -->
+            <div class="mt-16 glass rounded-3xl p-8 max-w-md mx-auto">
+                <div class="flex items-center justify-center gap-3 mb-6">
+                    <i class="fa-solid fa-shield-halved text-yellow-400"></i>
+                    <h2 class="text-xl font-semibold tracking-tight">Join the Waitlist</h2>
+                </div>
+
+                <p class="text-gray-400 mb-8 text-center text-lg">
+                    Sign up now to be first when we launch. Share only what you want and get paid for it.
+                </p>
+
+                <div class="space-y-6">
+                    <!-- Email -->
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Email Address</label>
+                        <div class="flex">
+                            <input id="email" type="email" placeholder="you@example.com"
+                                   class="flex-1 bg-black/50 border border-gray-700 focus:border-yellow-400 rounded-l-3xl px-6 py-5 outline-none text-white">
+                            <button onclick="submitEmail()" 
+                                    class="bg-yellow-400 hover:bg-yellow-300 transition-all text-black font-semibold px-8 rounded-r-3xl">
+                                Join
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-700"></div></div>
+                        <div class="relative flex justify-center text-xs uppercase tracking-widest text-gray-500">
+                            <span class="bg-black px-4">or</span>
+                        </div>
+                    </div>
+
+                    <!-- Wallet -->
+                    <button onclick="connectSolanaWallet()" 
+                            class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 transition-all text-white font-semibold py-6 rounded-3xl text-lg flex items-center justify-center gap-3">
+                        <i class="fa-brands fa-solana text-2xl"></i>
+                        CONNECT SOLANA WALLET
+                    </button>
+                </div>
+
+                <div class="mt-10 text-xs text-gray-500 space-y-4">
+                    <p class="flex items-start gap-2">
+                        <i class="fa-solid fa-circle-info mt-0.5"></i>
+                        <span>Your email and wallet address may be shared with trusted partners for platform operations.</span>
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Three.js Starfield - Flying through space
-        let scene, camera, renderer;
-        let particles;
-        
-        function initSpace() {
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('space'), alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            
-            // Stars
-            const geometry = new THREE.BufferGeometry();
-            const vertices = [];
-            const colors = [];
-            
-            for (let i = 0; i < 8000; i++) {
-                const x = Math.random() * 2000 - 1000;
-                const y = Math.random() * 2000 - 1000;
-                const z = Math.random() * 2000 - 1000;
-                vertices.push(x, y, z);
-                
-                // Neon space colors
-                const color = Math.random() > 0.7 ? new THREE.Color(0x00ffff) : 
-                             (Math.random() > 0.5 ? new THREE.Color(0xff00ff) : new THREE.Color(0xffff00));
-                colors.push(color.r, color.g, color.b);
+        // Rain Effect
+        function createRain() {
+            const container = document.getElementById('rain');
+            for (let i = 0; i < 150; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'rain-drop';
+                drop.style.left = Math.random() * 100 + 'vw';
+                drop.style.opacity = Math.random() * 0.6 + 0.4;
+                drop.style.height = Math.random() * 70 + 40 + 'px';
+                drop.style.animationDuration = Math.random() * 0.7 + 0.4 + 's';
+                drop.style.animationDelay = '-' + Math.random() * 3 + 's';
+                container.appendChild(drop);
             }
-            
-            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-            
-            const material = new THREE.PointsMaterial({
-                size: 1.8,
-                vertexColors: true,
-                transparent: true,
-                opacity: 0.9,
-                blending: THREE.AdditiveBlending
-            });
-            
-            particles = new THREE.Points(geometry, material);
-            scene.add(particles);
-            camera.position.z = 1;
         }
-        
-        function animateSpace() {
-            requestAnimationFrame(animateSpace);
-            
-            // Fly forward effect
-            particles.rotation.y += 0.0001;
-            const positions = particles.geometry.attributes.position.array;
-            for (let i = 2; i < positions.length; i += 3) {
-                positions[i] += 3; // speed
-                if (positions[i] > 1000) positions[i] = -1000;
+
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwdLK9nJo6AOXJn5AJenWkKrJaFAFFnA4Sm0n6wXJvElH9mHhumJmafPr1b4IeMpXAdqw/exec";
+
+        async function submitEmail() {
+            const email = document.getElementById('email').value.trim();
+            if (!email) return alert("Please enter your email");
+
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: new URLSearchParams({ email: email, source: 'email' })
+                });
+                alert(`✅ Thank you!\n\n${email} has been added to the waitlist.`);
+                document.getElementById('email').value = '';
+            } catch (e) {
+                alert("✅ Thank you! (Demo mode - Google Sheet not connected yet)");
             }
-            particles.geometry.attributes.position.needsUpdate = true;
-            
-            renderer.render(scene, camera);
         }
-        
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-        
-        // Teaser cycling
-        const teasers = [
-            { text: "333 LORDS AND LADIES", imgId: "art1" },
-            { text: "666 NOBLES", imgId: "art2" },
-            { text: "999 PEASANTS", imgId: "art3" }
-        ];
-        let current = 0;
-        const teaserEl = document.getElementById('teaser');
-        const artContainer = document.getElementById('artContainer');
-        
-        function cycleTeaser() {
-            current = (current + 1) % teasers.length;
-            
-            // Fade out
-            teaserEl.style.opacity = 0;
-            artContainer.classList.remove('active');
-            
-            setTimeout(() => {
-                teaserEl.textContent = teasers[current].text;
-                
-                // Switch images
-                document.querySelectorAll('#artContainer img').forEach(img => img.style.display = 'none');
-                document.getElementById(teasers[current].imgId).style.display = 'block';
-                
-                // Fade in
-                teaserEl.style.opacity = 1;
-                artContainer.classList.add('active');
-            }, 800);
+
+        async function connectSolanaWallet() {
+            if (!window.solana) {
+                return alert("Please install Phantom or another Solana wallet.");
+            }
+            try {
+                const resp = await window.solana.connect();
+                const wallet = resp.publicKey.toString();
+
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: new URLSearchParams({ wallet: wallet, source: 'wallet' })
+                });
+
+                alert(`✅ Wallet Connected!\n\n${wallet}\n\nYou've been added to the priority waitlist.`);
+            } catch (err) {
+                alert("Wallet connection failed or cancelled.");
+            }
         }
-        
-        // Initial setup & timings for suspense
-        window.onload = () => {
-            initSpace();
-            animateSpace();
-            
-            // Initial fade-ins
-            setTimeout(() => {
-                document.querySelector('.logo').style.opacity = 1;
-            }, 800);
-            
-            setTimeout(() => {
-                artContainer.classList.add('active');
-                teaserEl.style.opacity = 1;
-                document.getElementById('reveal').style.opacity = 1;
-            }, 1800);
-            
-            // Cycle teasers every 5 seconds
-            setInterval(cycleTeaser, 5200);
-            
-            // Occasional random "glitch" on reveal text
-            setInterval(() => {
-                const reveal = document.getElementById('reveal');
-                reveal.style.transform = 'scale(1.05)';
-                setTimeout(() => reveal.style.transform = 'scale(1)', 180);
-            }, 7000);
-        };
+
+        window.onload = createRain;
     </script>
 </body>
 </html>
