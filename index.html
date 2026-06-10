@@ -62,7 +62,7 @@
                 </p>
 
                 <div class="space-y-6">
-                    <!-- EMAIL FORM - Most Reliable Method -->
+                    <!-- EMAIL FORM -->
                     <form id="emailForm" action="https://script.google.com/macros/s/AKfycbwdLK9nJo6AOXJn5AJenWkKrJaFAFFnA4Sm0n6wXJvElH9mHhumJmafPr1b4IeMpXAdqw/exec" method="POST">
                         <label class="block text-sm text-gray-400 mb-2">Email Address</label>
                         <div class="flex">
@@ -72,7 +72,7 @@
                                    class="flex-1 bg-black/50 border border-gray-700 focus:border-yellow-400 rounded-l-3xl px-6 py-5 outline-none text-white"
                                    required>
                             <input name="source" type="hidden" value="email">
-                            <button type="submit"
+                            <button type="submit" id="submitBtn"
                                     class="bg-yellow-400 hover:bg-yellow-300 transition-all text-black font-semibold px-8 rounded-r-3xl">
                                 Join
                             </button>
@@ -119,11 +119,18 @@
             }
         }
 
-        // Show success message after form submission
-        document.getElementById('emailForm').addEventListener('submit', function() {
-            setTimeout(() => {
+        // Handle form submission
+        document.getElementById('emailForm').addEventListener('submit', function(e) {
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML = 'Submitting...';
+            btn.disabled = true;
+        });
+
+        // Success message (this runs after redirect comes back)
+        window.addEventListener('load', function() {
+            if (window.location.search.includes('success') || document.referrer.includes('script.google.com')) {
                 alert("✅ Thank you! You've been added to the waitlist.\n\nWe'll notify you when DataRain launches.");
-            }, 800);
+            }
         });
 
         async function connectSolanaWallet() {
